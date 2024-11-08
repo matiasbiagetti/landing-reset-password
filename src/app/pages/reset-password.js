@@ -19,7 +19,7 @@ export default function ResetPassword() {
 
       // Opcional: Redirigir a la tienda de aplicaciones si la app no está instalada
       setTimeout(() => {
-        window.location.href = 'https://yourappstorelink.com'; // Enlace a tu app en App Store o Google Play
+        window.location.href = 'https://youtube.com'; // Enlace a tu app en App Store o Google Play
       }, 2000);
     }
   }, [token]);
