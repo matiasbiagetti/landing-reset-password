@@ -14,7 +14,7 @@ export default function ResetPassword() {
 
     if (isMobile) {
       // Redirigir al esquema de enlace profundo si está en móvil
-      const appLink = `myapp://reset-password?token=${token}`;
+      const appLink = `exp://192.168.1.49:8081/--/reset-password?token=${token}`;
       window.location.href = appLink;
 
       // Opcional: Redirigir a la tienda de aplicaciones si la app no está instalada
