@@ -17,7 +17,7 @@ const ResetPassword = () => {
     if (success) {
       const timer = setTimeout(() => {
         window.close(); // Close the tab after 30 seconds
-      }, 30000); // 30000 milliseconds = 30 seconds
+      }, 30000);
 
       return () => clearTimeout(timer); // Clear timer if the component unmounts
     }
@@ -31,7 +31,7 @@ const ResetPassword = () => {
     }
 
     try {
-      await axios.post('https://your-backend-url.com/api/reset-password', {
+      await axios.post('https://backend-red-social-prod.vercel.app/api/auth/reset-password', {
         token,
         newPassword: password,
       });
@@ -43,7 +43,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#2C2B5E] to-[#48346B] p-6">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#2C2B5E] to-[#48346B] p-6 font-inter">
       <form
         onSubmit={handlePasswordReset}
         className="bg-[#1A1A2E] p-8 rounded-lg shadow-lg text-center w-full max-w-md"
@@ -55,7 +55,7 @@ const ResetPassword = () => {
         <h2 className="text-xl font-semibold text-white mb-4">Reset Password</h2>
 
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        
+
         {success ? (
           <div className="text-green-500 text-sm mb-4">
             Password has been reset successfully! You may close this tab, or it will close automatically in 30 seconds.
