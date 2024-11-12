@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import logo from '../assets/logo2.png'; // Adjust the path if needed
-import styles from '../styles/ResetPassword.module.css'; // Assuming you place the styles in a CSS module file
+import logo from '../assets/logo2.png'; 
+import styles from '../styles/ResetPassword.module.css'; 
+import "../styles/globals.css";
 
 const ResetPassword = () => {
   const router = useRouter();
