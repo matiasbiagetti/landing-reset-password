@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-import logo from './assets/logo2.png'; 
+import logo from '../assets/logo2.png'; 
 import '../ResetPassword.css'; 
 
 const ResetPassword = () => {
