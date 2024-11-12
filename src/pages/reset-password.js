@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 const ResetPassword = () => {
   const router = useRouter();
-  const { token } = router.query; // Extract the token from the URL query parameter
+  const { token } = router.query;
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,7 +21,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await axios.post('https://your-backend-url.com/api/reset-password', {
+      await axios.post('https://your-backend-url.com/api/reset-password', {
         token,
         newPassword: password,
       });
@@ -52,6 +52,11 @@ const ResetPassword = () => {
   return (
     <div style={styles.container}>
       <div style={styles.formContainer}>
+        <div style={styles.header}>
+          {/* Logo and App Name */}
+          <img src="/assets/logo2.png" alt="SnapShare Logo" style={styles.logo} />
+          <h1 style={styles.appName}>SnapShare</h1>
+        </div>
         <h2 style={styles.title}>Reset Password</h2>
 
         {error && <p style={styles.errorText}>{error}</p>}
@@ -101,22 +106,40 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b)',
+    background: 'linear-gradient(135deg, #1e1e3f, #3d315b, #4d2c91)',
     color: '#fff',
   },
   formContainer: {
     maxWidth: '400px',
     width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    padding: '20px',
-    borderRadius: '10px',
-    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'rgba(30, 30, 48, 0.85)',
+    padding: '30px',
+    borderRadius: '15px',
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
     textAlign: 'center',
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  logo: {
+    width: '80px',
+    height: '80px',
+    borderRadius: '50%',
+    marginBottom: '10px',
+  },
+  appName: {
+    fontSize: '28px',
+    fontWeight: 'bold',
+    color: '#ffaf7b',
   },
   title: {
     fontSize: '24px',
     marginBottom: '20px',
     fontWeight: 'bold',
+    color: '#fff',
   },
   inputGroup: {
     marginBottom: '15px',
@@ -126,15 +149,17 @@ const styles = {
     display: 'block',
     marginBottom: '5px',
     color: '#ddd',
+    fontWeight: '500',
   },
   input: {
     width: '100%',
-    padding: '10px',
+    padding: '12px',
     borderRadius: '8px',
     border: 'none',
     outline: 'none',
     fontSize: '16px',
-    color: '#333',
+    color: '#fff',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   button: {
     width: '100%',
@@ -148,9 +173,6 @@ const styles = {
     cursor: 'pointer',
     marginTop: '20px',
     transition: 'opacity 0.3s ease',
-  },
-  buttonHover: {
-    opacity: 0.8,
   },
   errorText: {
     color: '#ff4b2b',
