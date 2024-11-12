@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import logo from '../assets/logo2.png'; 
+import '../styles/globals.css';
 
 const ResetPassword = () => {
   const router = useRouter();
@@ -15,10 +16,10 @@ const ResetPassword = () => {
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
-        window.close(); 
-      }, 30000); 
+        window.close(); // Close the tab after 30 seconds
+      }, 30000); // 30000 milliseconds = 30 seconds
 
-      return () => clearTimeout(timer); 
+      return () => clearTimeout(timer); // Clear timer if the component unmounts
     }
   }, [success]);
 
@@ -30,7 +31,7 @@ const ResetPassword = () => {
     }
 
     try {
-      await axios.post('https://landing-reset-password.vercel.app/api/auth/reset-password', {
+      await axios.post('https://your-backend-url.com/api/reset-password', {
         token,
         newPassword: password,
       });
