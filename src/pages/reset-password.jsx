@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import Image from 'next/image'; 
 import Head from 'next/head'; 
-import logo from '../public/logo2.png';
+import logo from '../assests/logo2.png';
 import '../styles/globals.css';
 
 const ResetPassword = () => {
