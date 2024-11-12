@@ -62,6 +62,7 @@ const ResetPassword = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
             className={styles.inputField}
+            disabled={!token}
           />
         </div>
 
@@ -74,6 +75,7 @@ const ResetPassword = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
             className={styles.inputField}
+            disabled={!password || !token}
           />
         </div>
 
