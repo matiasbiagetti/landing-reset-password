@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import Image from 'next/image'; // Import Image from next/image
-import Head from 'next/head'; // Import Head from next/head
-import logo from '../public/logo2.png'; // Ensure your logo is in the public folder
+import Image from 'next/image'; 
+import Head from 'next/head'; 
+import logo from '../public/logo2.png';
 import '../styles/globals.css';
 
 const ResetPassword = () => {
