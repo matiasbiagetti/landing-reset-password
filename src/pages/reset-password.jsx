@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import logo from '../assets/logo2.png'; 
 import '../styles/globals.css';
-import { headers } from 'next/headers';
 
 const ResetPassword = () => {
   const router = useRouter();
@@ -34,7 +33,7 @@ const ResetPassword = () => {
     try {
       await axios.post('https://backend-red-social-prod.vercel.app/api/auth/reset-password', {
         token,
-        password: password,
+        password,
       });
       setSuccess(true);
       setError('');
