@@ -34,7 +34,7 @@ const ResetPassword = () => {
     try {
       await axios.post('https://backend-red-social-prod.vercel.app/api/auth/reset-password', {
         token,
-        Password: password,
+        password: password,
       });
       setSuccess(true);
       setError('');
