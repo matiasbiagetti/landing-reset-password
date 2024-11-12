@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
-import logo from '../assets/logo2.png'; 
-import '../ResetPassword.css'; 
+import { useRouter } from 'next/router';
+import logo from '../assets/logo2.png'; // Adjust the path if needed
+import styles from '../styles/ResetPassword.module.css'; // Assuming you place the styles in a CSS module file
 
 const ResetPassword = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const queryParams = new URLSearchParams(location.search);
-  const token = queryParams.get('token');
+  const router = useRouter();
+  const { token } = router.query; // Extract the token from query parameters
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      setError('Invalid or missing token');
+    }
+  }, [token]);
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
@@ -24,32 +27,32 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await axios.post('https://your-backend-url.com/api/reset-password', {
+      const response = await axios.post('https://backend-red-social-prod.vercel.app/api/auth/reset-password', {
         token,
         newPassword: password,
       });
       setSuccess(true);
       setError('');
       alert('Password reset successfully!');
-      navigate('/login');
+      router.push('/login'); // Redirect to the login page
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to reset password');
     }
   };
 
   return (
-    <div className="reset-container">
-      <form className="reset-form" onSubmit={handlePasswordReset}>
-        <div className="logo-container">
-          <img src={logo} alt="SnapShare Logo" className="logo" />
-          <h1 className="app-name">SnapShare</h1>
+    <div className={styles.resetContainer}>
+      <form className={styles.resetForm} onSubmit={handlePasswordReset}>
+        <div className={styles.logoContainer}>
+          <img src={logo.src} alt="SnapShare Logo" className={styles.logo} />
+          <h1 className={styles.appName}>SnapShare</h1>
         </div>
-        <h2 className="title">Reset Password</h2>
+        <h2 className={styles.title}>Reset Password</h2>
 
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">Password has been reset successfully!</p>}
+        {error && <p className={styles.error}>{error}</p>}
+        {success && <p className={styles.success}>Password has been reset successfully!</p>}
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="password">New Password:</label>
           <input
             type="password"
@@ -57,11 +60,11 @@ const ResetPassword = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="input-field"
+            className={styles.inputField}
           />
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="confirmPassword">Confirm New Password:</label>
           <input
             type="password"
@@ -69,11 +72,11 @@ const ResetPassword = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="input-field"
+            className={styles.inputField}
           />
         </div>
 
-        <button type="submit" className="reset-button">Reset Password</button>
+        <button type="submit" className={styles.resetButton}>Reset Password</button>
       </form>
     </div>
   );
