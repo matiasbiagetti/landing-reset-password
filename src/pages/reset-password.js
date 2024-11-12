@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import logo from '../assets/logo2.png'; 
-import styles from '../styles/ResetPassword.module.css'; 
-import "../styles/globals.css";
 
 const ResetPassword = () => {
   const router = useRouter();
-  const { token } = router.query; // Extract the token from query parameters
+  const { token } = router.query;
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -15,10 +13,14 @@ const ResetPassword = () => {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    if (!token) {
-      setError('Invalid or missing token');
+    if (success) {
+      const timer = setTimeout(() => {
+        window.close(); 
+      }, 30000); 
+
+      return () => clearTimeout(timer); 
     }
-  }, [token]);
+  }, [success]);
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
@@ -28,58 +30,69 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await axios.post('https://backend-red-social-prod.vercel.app/api/auth/reset-password', {
+      await axios.post('https://landing-reset-password.vercel.app/api/auth/reset-password', {
         token,
         newPassword: password,
       });
       setSuccess(true);
       setError('');
-      alert('Password reset successfully!');
-      router.push('/login'); // Redirect to the login page
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to reset password');
     }
   };
 
   return (
-    <div className={styles.resetContainer}>
-      <form className={styles.resetForm} onSubmit={handlePasswordReset}>
-        <div className={styles.logoContainer}>
-          <img src={logo.src} alt="SnapShare Logo" className={styles.logo} />
-          <h1 className={styles.appName}>SnapShare</h1>
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#2C2B5E] to-[#48346B] p-6">
+      <form
+        onSubmit={handlePasswordReset}
+        className="bg-[#1A1A2E] p-8 rounded-lg shadow-lg text-center w-full max-w-md"
+      >
+        <div className="flex flex-col items-center mb-6">
+          <img src={logo.src} alt="SnapShare Logo" className="w-20 h-20 mb-2" />
+          <h1 className="text-2xl font-bold text-[#FF8C00]">SnapShare</h1>
         </div>
-        <h2 className={styles.title}>Reset Password</h2>
+        <h2 className="text-xl font-semibold text-white mb-4">Reset Password</h2>
 
-        {error && <p className={styles.error}>{error}</p>}
-        {success && <p className={styles.success}>Password has been reset successfully!</p>}
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        
+        {success ? (
+          <div className="text-green-500 text-sm mb-4">
+            Password has been reset successfully! You may close this tab, or it will close automatically in 30 seconds.
+          </div>
+        ) : (
+          <>
+            <div className="mb-4 text-left">
+              <label htmlFor="password" className="text-white font-medium">New Password:</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+              />
+            </div>
 
-        <div className={styles.formGroup}>
-          <label htmlFor="password">New Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className={styles.inputField}
-            disabled={!token}
-          />
-        </div>
+            <div className="mb-6 text-left">
+              <label htmlFor="confirmPassword" className="text-white font-medium">Confirm New Password:</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+              />
+            </div>
 
-        <div className={styles.formGroup}>
-          <label htmlFor="confirmPassword">Confirm New Password:</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className={styles.inputField}
-            disabled={!password || !token}
-          />
-        </div>
-
-        <button type="submit" className={styles.resetButton}>Reset Password</button>
+            <button
+              type="submit"
+              className="w-full py-3 bg-gradient-to-r from-[#FF416C] to-[#FF4B2B] text-white font-bold rounded-md hover:bg-gradient-to-r hover:from-[#FF4B2B] hover:to-[#FF416C] transition-all duration-300"
+            >
+              Reset Password
+            </button>
+          </>
+        )}
       </form>
     </div>
   );
