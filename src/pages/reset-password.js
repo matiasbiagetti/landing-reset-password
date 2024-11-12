@@ -1,59 +1,105 @@
-// pages/reset-password.js
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
-export default function ResetPassword() {
-  const router = useRouter();
-  const { token } = router.query; // Obtener el token desde los parámetros de la URL
+const ResetPassword = () => {
+  const location = useLocation();
+  
+  // Extract the token from query parameters
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get('token');
 
-  useEffect(() => {
-    if (!token) return; // Esperar hasta que tengamos el token
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [countdown, setCountdown] = useState(30);
 
-    // Detectar si el usuario está en un dispositivo móvil
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const handlePasswordReset = async (e) => {
+    e.preventDefault();
 
-    if (isMobile) {
-      // Redirigir al esquema de enlace profundo si está en móvil
-      const appLink = `exp://192.168.1.49:8081/--/reset-password?token=${token}`;
-      window.location.href = appLink;
-
-      // Opcional: Redirigir a la tienda de aplicaciones si la app no está instalada
-      setTimeout(() => {
-        window.location.href = 'https://youtube.com'; // Enlace a tu app en App Store o Google Play
-      }, 2000);
+    // Validate that the passwords match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
     }
-  }, [token]);
+
+    try {
+      // Send request to backend
+      const response = await axios.post('https://your-backend-url.com/api/reset-password', {
+        token: token,
+        newPassword: password,
+      });
+
+      // Handle successful response
+      setSuccess(true);
+      setError('');
+    } catch (error) {
+      // Handle errors
+      setError(error.response?.data?.message || 'Failed to reset password');
+    }
+  };
+
+  // Start countdown and close the tab if success is true
+  useEffect(() => {
+    if (success) {
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            clearInterval(timer);
+            window.close(); // Close the tab
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer); // Cleanup timer on unmount
+    }
+  }, [success]);
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Reset Your Password</h1>
-      <p style={styles.message}>
-        {token
-          ? 'If you are on a mobile device, you will be redirected to the app. If you are on a desktop, please open this link on your mobile device.'
-          : 'Loading...'}
-      </p>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <form onSubmit={handlePasswordReset} style={{ maxWidth: '400px', width: '100%' }}>
+        <h2>Reset Password</h2>
+
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        
+        {success ? (
+          <div>
+            <p style={{ color: 'green' }}>Password has been reset successfully!</p>
+            <p>You can close this tab, or it will close automatically in {countdown} seconds.</p>
+          </div>
+        ) : (
+          <>
+            <div style={{ marginBottom: '10px' }}>
+              <label htmlFor="password">New Password:</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '10px' }}>
+              <label htmlFor="confirmPassword">Confirm New Password:</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+              />
+            </div>
+
+            <button type="submit" style={{ padding: '10px 15px', width: '100%' }}>Reset Password</button>
+          </>
+        )}
+      </form>
     </div>
   );
-}
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    textAlign: 'center',
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
-  },
-  title: {
-    color: '#333',
-    fontSize: '24px',
-    marginBottom: '20px',
-  },
-  message: {
-    color: '#666',
-    fontSize: '16px',
-  },
 };
+
+export default ResetPassword;
