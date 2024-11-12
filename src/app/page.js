@@ -1,5 +1,7 @@
+"use client"; // This enables the use of client-side hooks like useEffect
+
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import Head from 'next/head';
 
 export default function Home() {
