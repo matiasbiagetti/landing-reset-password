@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    font-family: 'Inter-Regular', sans-serif;
+    background: linear-gradient(to bottom right, #2C2B5E, #48346B);
+    color: #FFFFFF;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Fonts */
+  @font-face {
+    font-family: 'Inter-Regular';
+    src: url('/assets/fonts/Inter_24pt-Regular.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Inter-Bold';
+    src: url('/assets/fonts/Inter_18pt-Bold.ttf') format('truetype');
+  }
+  
