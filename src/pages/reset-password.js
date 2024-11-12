@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useRouter } from 'next/router';
 
 const ResetPassword = () => {
-  const location = useLocation();
-  
-  // Extract the token from query parameters
-  const queryParams = new URLSearchParams(location.search);
-  const token = queryParams.get('token');
+  const router = useRouter();
+  const { token } = router.query; // Extract the token from the URL query parameter
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,41 +15,37 @@ const ResetPassword = () => {
   const handlePasswordReset = async (e) => {
     e.preventDefault();
 
-    // Validate that the passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
     try {
-      // Send request to backend
       const response = await axios.post('https://your-backend-url.com/api/reset-password', {
-        token: token,
+        token,
         newPassword: password,
       });
 
-      // Handle successful response
       setSuccess(true);
       setError('');
     } catch (error) {
-      // Handle errors
       setError(error.response?.data?.message || 'Failed to reset password');
     }
   };
 
-  // Start countdown and close the tab if success is true
   useEffect(() => {
     if (success) {
       const timer = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          if (prevCountdown <= 1) {
+        setCountdown((prev) => {
+          if (prev <= 1) {
             clearInterval(timer);
-            window.close(); // Close the tab
+            window.close();
           }
-          return prevCountdown - 1;
+          return prev - 1;
         });
       }, 1000);
-      return () => clearInterval(timer); // Cleanup timer on unmount
+
+      return () => clearInterval(timer);
     }
   }, [success]);
 
@@ -62,7 +55,6 @@ const ResetPassword = () => {
         <h2>Reset Password</h2>
 
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        
         {success ? (
           <div>
             <p style={{ color: 'green' }}>Password has been reset successfully!</p>
