@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import Image from 'next/image'; 
-import Head from 'next/head'; 
-import logo from '../assests/logo2.png';
+import Image from 'next/image';
+import Head from 'next/head';
 import '../styles/globals.css';
 
 const ResetPassword = () => {
@@ -18,10 +17,9 @@ const ResetPassword = () => {
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
-        window.close(); // Close the tab after 30 seconds
+        window.close();
       }, 30000);
-
-      return () => clearTimeout(timer); // Clear timer if the component unmounts
+      return () => clearTimeout(timer);
     }
   }, [success]);
 
@@ -55,7 +53,7 @@ const ResetPassword = () => {
           className="bg-[#1A1A2E] p-8 rounded-lg shadow-lg text-center w-full max-w-md"
         >
           <div className="flex flex-col items-center mb-6">
-            <Image src={logo} alt="SnapShare Logo" width={80} height={80} className="mb-2" />
+            <Image src="/logo2.png" alt="SnapShare Logo" width={80} height={80} className="mb-2" />
             <h1 className="text-2xl font-bold text-[#FF8C00]">SnapShare</h1>
           </div>
           <h2 className="text-xl font-semibold text-white mb-4">Reset Password</h2>
