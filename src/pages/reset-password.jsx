@@ -3,11 +3,9 @@ import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import '../styles/globals.css';
 
 const ResetPassword = ({ changePassword, navigation }) => {
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -41,7 +39,7 @@ const ResetPassword = ({ changePassword, navigation }) => {
     }
 
     try {
-      const response = await changePassword(currentPassword, newPassword);
+      const response = await changePassword(newPassword);
       console.log('API Response:', response); // Log the response for debugging
 
       if (response.message === 'Password changed successfully') {
@@ -49,9 +47,7 @@ const ResetPassword = ({ changePassword, navigation }) => {
         navigation.goBack();
       } else {
         console.error('Error response:', response); // Log the error response for debugging
-        if (response.error === 'Incorrect old password') {
-          setError('La contraseña actual es incorrecta. Por favor, intenta de nuevo.');
-        } else if (response.error) {
+        if (response.error) {
           setError(`Error: ${response.error}`);
         } else {
           setError('Hubo un problema al cambiar la contraseña. Por favor, intenta de nuevo más tarde.');
@@ -67,23 +63,6 @@ const ResetPassword = ({ changePassword, navigation }) => {
     <div className="container mx-auto p-4">
       <form className="bg-[#222] p-6 rounded-md shadow-md">
         <div className="mb-6 text-left">
-          <label htmlFor="currentPassword" className="text-white font-medium">Current Password:</label>
-          <div className="relative">
-            <input
-              type={showCurrentPassword ? "text" : "password"}
-              id="currentPassword"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-              className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
-            />
-            <button type="button" onClick={() => setShowCurrentPassword(!showCurrentPassword)} className="eye-icon">
-              {showCurrentPassword ? <IoEyeOffOutline size={24} color="#999" /> : <IoEyeOutline size={24} color="#999" />}
-            </button>
-          </div>
-        </div>
-
-        <div className="mb-6 text-left">
           <label htmlFor="newPassword" className="text-white font-medium">New Password:</label>
           <div className="relative">
             <input
@@ -94,7 +73,7 @@ const ResetPassword = ({ changePassword, navigation }) => {
               required
               className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
             />
-            <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="eye-icon">
+            <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
               {showNewPassword ? <IoEyeOffOutline size={24} color="#999" /> : <IoEyeOutline size={24} color="#999" />}
             </button>
           </div>
@@ -111,7 +90,7 @@ const ResetPassword = ({ changePassword, navigation }) => {
               required
               className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
             />
-            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="eye-icon">
+            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
               {showConfirmPassword ? <IoEyeOffOutline size={24} color="#999" /> : <IoEyeOutline size={24} color="#999" />}
             </button>
           </div>
