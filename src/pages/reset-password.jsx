@@ -3,7 +3,7 @@ import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import '../styles/globals.css';
 import { Alert } from 'react-native';
 
-const ResetPassword = ({navigation}) => {
+const ResetPassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
