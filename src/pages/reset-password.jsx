@@ -4,103 +4,147 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Head from 'next/head';
 import '../styles/globals.css';
+import { Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
 
-const ResetPassword = () => {
-  const router = useRouter();
-  const { token } = router.query;
-
-  const [password, setPassword] = useState('');
+const ResetPassword = ({ navigation }) => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        window.close();
-      }, 30000);
-      return () => clearTimeout(timer);
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length < 8) {
+      errors.push('La contraseña debe tener al menos 8 caracteres.');
     }
-  }, [success]);
+    if (!/[A-Z]/.test(password)) {
+      errors.push('La contraseña debe contener al menos una letra mayúscula.');
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push('La contraseña debe contener al menos un número.');
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push('La contraseña debe contener al menos un carácter especial.');
+    }
+    return errors;
+  };
 
-  const handlePasswordReset = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+  const handleChangePassword = async () => {
+    const passwordErrors = validatePassword(newPassword);
+    if (passwordErrors.length > 0) {
+      setError(passwordErrors.join('\n'));
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError('Las contraseñas nuevas no coinciden');
       return;
     }
 
     try {
-      await axios.post('https://backend-red-social-prod.vercel.app/api/auth/reset-password', {
-        token,
-        password,
-      });
-      setSuccess(true);
-      setError('');
+      const response = await changePassword(currentPassword, newPassword);
+      console.log('API Response:', response); // Log the response for debugging
+
+      if (response.message === 'Password changed successfully') {
+        Alert.alert('Éxito', 'Contraseña cambiada correctamente');
+        navigation.goBack();
+      } else {
+        console.error('Error response:', response); // Log the error response for debugging
+        if (response.error === 'Incorrect old password') {
+          setError('La contraseña actual es incorrecta. Por favor, intenta de nuevo.');
+        } else if (response.error) {
+          setError(`Error: ${response.error}`);
+        } else {
+          setError('Hubo un problema al cambiar la contraseña. Por favor, intenta de nuevo más tarde.');
+        }
+      }
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to reset password');
+      console.error('Error changing password:', error);
+      setError('Hubo un problema al cambiar la contraseña. Por favor, intenta de nuevo más tarde.');
     }
   };
 
   return (
-    <>
-      <Head>
-        <title>Reset Password</title>
-      </Head>
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#2C2B5E] to-[#48346B] p-6 font-inter">
-        <form
-          onSubmit={handlePasswordReset}
-          className="bg-[#1A1A2E] p-8 rounded-lg shadow-lg text-center w-full max-w-md"
-        >
-          <div className="flex flex-col items-center mb-6">
-            <Image src="/logo2.png" alt="SnapShare Logo" width={80} height={80} className="mb-2" />
-            <h1 className="text-2xl font-bold text-[#FF8C00]">SnapShare</h1>
+    <div className="container mx-auto p-4">
+      <form className="bg-[#222] p-6 rounded-md shadow-md">
+        <div className="mb-6 text-left">
+          <label htmlFor="currentPassword" className="text-white font-medium">Current Password:</label>
+          <div className="relative">
+            <input
+              type={showCurrentPassword ? "text" : "password"}
+              id="currentPassword"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+            />
+            <TouchableOpacity onPress={() => setShowCurrentPassword(!showCurrentPassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
+              <Ionicons
+                name={showCurrentPassword ? 'eye-off-outline' : 'eye-outline'}
+                size={24}
+                color="#999"
+              />
+            </TouchableOpacity>
           </div>
-          <h2 className="text-xl font-semibold text-white mb-4">Reset Password</h2>
+        </div>
 
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        <div className="mb-6 text-left">
+          <label htmlFor="newPassword" className="text-white font-medium">New Password:</label>
+          <div className="relative">
+            <input
+              type={showNewPassword ? "text" : "password"}
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+            />
+            <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
+              <Ionicons
+                name={showNewPassword ? 'eye-off-outline' : 'eye-outline'}
+                size={24}
+                color="#999"
+              />
+            </TouchableOpacity>
+          </div>
+        </div>
 
-          {success ? (
-            <div className="text-green-500 text-sm mb-4">
-              Password has been reset successfully! You may close this tab, or it will close automatically in 30 seconds.
-            </div>
-          ) : (
-            <>
-              <div className="mb-4 text-left">
-                <label htmlFor="password" className="text-white font-medium">New Password:</label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
-                />
-              </div>
+        <div className="mb-6 text-left">
+          <label htmlFor="confirmPassword" className="text-white font-medium">Confirm New Password:</label>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+            />
+            <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
+              <Ionicons
+                name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+                size={24}
+                color="#999"
+              />
+            </TouchableOpacity>
+          </div>
+        </div>
 
-              <div className="mb-6 text-left">
-                <label htmlFor="confirmPassword" className="text-white font-medium">Confirm New Password:</label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-3 bg-gradient-to-r from-[#FF416C] to-[#FF4B2B] text-white font-bold rounded-md hover:bg-gradient-to-r hover:from-[#FF4B2B] hover:to-[#FF416C] transition-all duration-300"
-              >
-                Reset Password
-              </button>
-            </>
-          )}
-        </form>
-      </div>
-    </>
+        <button
+          type="button"
+          onClick={handleChangePassword}
+          className="w-full py-3 bg-gradient-to-r from-[#FF416C] to-[#FF4B2B] text-white font-bold rounded-md hover:bg-gradient-to-r hover:from-[#FF4B2B] hover:to-[#FF416C] transition-all duration-300"
+        >
+          Change Password
+        </button>
+        {error && <p className="text-red-500 mt-4">{error}</p>}
+      </form>
+    </div>
   );
 };
 
