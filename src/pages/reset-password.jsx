@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Head from 'next/head'; 
 import logo from '../../public/logo2.png';
 import '../styles/globals.css';
+import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 
 const ResetPassword = () => {
   const router = useRouter();
@@ -14,6 +15,8 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (success) {
@@ -25,8 +28,32 @@ const ResetPassword = () => {
     }
   }, [success]);
 
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length < 8) {
+      errors.push('La contraseña debe tener al menos 8 caracteres.');
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push('La contraseña debe contener al menos una letra mayúscula.');
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push('La contraseña debe contener al menos un número.');
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push('La contraseña debe contener al menos un carácter especial.');
+    }
+    return errors;
+  };
+
   const handlePasswordReset = async (e) => {
     e.preventDefault();
+
+    const passwordErrors = validatePassword(password);
+    if (passwordErrors.length > 0) {
+      setError(passwordErrors.join('\n'));
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -68,28 +95,34 @@ const ResetPassword = () => {
             </div>
           ) : (
             <>
-              <div className="mb-4 text-left">
+              <div className="mb-4 text-left relative">
                 <label htmlFor="password" className="text-white font-medium">New Password:</label>
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
                 />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
+                  {showPassword ? <IoEyeOffOutline size={24} color="#999" /> : <IoEyeOutline size={24} color="#999" />}
+                </button>
               </div>
 
-              <div className="mb-6 text-left">
+              <div className="mb-6 text-left relative">
                 <label htmlFor="confirmPassword" className="text-white font-medium">Confirm New Password:</label>
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   className="w-full p-3 mt-2 rounded-md bg-[#333] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
                 />
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
+                  {showConfirmPassword ? <IoEyeOffOutline size={24} color="#999" /> : <IoEyeOutline size={24} color="#999" />}
+                </button>
               </div>
 
               <button
