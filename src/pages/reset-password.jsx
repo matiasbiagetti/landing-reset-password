@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import '../styles/globals.css';
-import { Alert } from 'react-native';
 
-const ResetPassword = () => {
+const ResetPassword = ({ changePassword, navigation }) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,7 +26,7 @@ const ResetPassword = () => {
       errors.push('La contraseña debe contener al menos un carácter especial.');
     }
     return errors;
-  };w
+  };
 
   const handleChangePassword = async () => {
     const passwordErrors = validatePassword(newPassword);
@@ -46,7 +45,7 @@ const ResetPassword = () => {
       console.log('API Response:', response); // Log the response for debugging
 
       if (response.message === 'Password changed successfully') {
-        Alert.alert('Éxito', 'Contraseña cambiada correctamente');
+        alert('Éxito: Contraseña cambiada correctamente');
         navigation.goBack();
       } else {
         console.error('Error response:', response); // Log the error response for debugging
