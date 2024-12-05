@@ -17,6 +17,7 @@ const ResetPassword = () => {
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState([]);
 
   useEffect(() => {
     if (success) {
@@ -45,10 +46,13 @@ const ResetPassword = () => {
     return errors;
   };
 
+  useEffect(() => {
+    setPasswordErrors(validatePassword(password));
+  }, [password]);
+
   const handlePasswordReset = async (e) => {
     e.preventDefault();
 
-    const passwordErrors = validatePassword(password);
     if (passwordErrors.length > 0) {
       setError(passwordErrors.join('\n'));
       return;
@@ -108,6 +112,13 @@ const ResetPassword = () => {
                 <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 10, bottom: 10 }}>
                   {showPassword ? <IoEyeOffOutline size={24} color="#999" /> : <IoEyeOutline size={24} color="#999" />}
                 </button>
+                {passwordErrors.length > 0 && (
+                  <div className="text-red-500 text-sm mt-2">
+                    {passwordErrors.map((error, index) => (
+                      <p key={index}>{error}</p>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="mb-6 text-left relative">
